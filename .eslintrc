@@ -1,0 +1,45 @@
+{
+  "parser": "babel-eslint",
+
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true,
+  },
+
+  "ecmaFeatures": {
+    "modules": true,
+  },
+
+  "globals": {
+    "process.env": true
+  },
+
+  "plugins": [
+    "flowtype",
+    "smells"
+  ],
+
+  "extends": "standard",
+
+  "rules": {
+    "key-spacing": 0,
+    "no-trailing-spaces": 0,
+    "no-multiple-empty-lines": [2, {"max": 2}],
+    "padded-blocks": 0,
+    "semi": [2, "always"],
+    "arrow-parens": 0,
+
+    "flowtype/require-parameter-type": 1,
+    "flowtype/require-return-type": [1, "always", { "annotateUndefined": "never" }],
+    "flowtype/space-after-type-colon": [1, "always"],
+    "flowtype/space-before-type-colon": [1,"never"],
+
+    "smells/no-switch": 0,
+    "smells/no-complex-switch-case": 1,
+    "smells/no-setinterval": 1,
+    "smells/no-this-assign": 1,
+    "smells/no-complex-string-concat": 1,
+    "smells/no-complex-chaining": 0
+  }
+}
