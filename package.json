@@ -1,11 +1,11 @@
 {
   "name": "is-schema",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Checks if object literal is the correct schema",
   "main": "./lib/index.js",
   "keywords": [
     "schema",
-    "validation"
+    "validation",
     "literal",
     "JSON"
   ],
