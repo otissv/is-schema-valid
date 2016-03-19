@@ -1,3 +1,5 @@
 #No Mutate
 
-A small library for creating for creating immutable collections and lists.
+Checks if object literal is the correct schema.
+
+Note: could change at any second 
