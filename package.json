@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "Checks if object literal is the correct schema",
   "main": "./lib/index.js",
+  "keywords": [
+    "schema",
+    "validation"
+    "literal",
+    "JSON"
+  ],
   "scripts": {
     "start": "webpack --config --watch || true",
     "flow": "flow check; [[ $?=0||$?=2 ]]",
