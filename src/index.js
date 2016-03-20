@@ -12,9 +12,18 @@ function keyValidation (key: string, type: string) {
 }
 
 // check all object pairs values have the correst typeof as stated in Collection Schema
-function valueValidation (element: OBJECT, key: string, type: string) {
-  if (typeof element[key] !== type) {
-    throw new Error(`Invalid Schema Error: ${key} value is not ${type} type.`);
+function valueValidation (element: OBJECT, key: string, schemaType: string) {
+
+  if (schemaType.type === 'array') {
+    // if array call schemaValidation
+    schemaValidation(element[key], schemaType.schema);
+    
+  } else if (typeof element !== schemaType.type) {
+    if (!Array.isArray(element)) {
+      throw new Error(`xxxInvalid Schema Error: ${key} value is not ${schemaType.type} type.`);
+    } else {
+      throw new Error(`Invalid Schema Error: ${key} value is not ${schemaType.type} type.`);
+    }
   }
 }
 
@@ -34,18 +43,28 @@ function keyAndPairValidation (data: Array<any>, schema: SCHEMA, requiredFields:
   data.forEach((element: OBJECT) => {
     requiredValidation(element, requiredFields);
 
-    Object.keys(element).forEach((elKey: any) => {
-      let schemaType;
+    if (typeof element === 'object') {
+      Object.keys(element).forEach((elKey: any) => {
+        let schemaType;
 
-      if (typeof schema[elKey] === 'object') {
-        schemaType = schema[elKey].type;
-      } else {
-        schemaType = schema[elKey];
-      }
+        if (Array.isArray(schema[elKey])) {
+          schemaType = { type: 'array', schema: schema[elKey][0] };
 
-      keyValidation(elKey, schemaType);
-      valueValidation(element, elKey, schemaType);
-    });
+        } else if (typeof schema[elKey] === 'object') {
+          schemaType = { type: schema[elKey].type };
+
+        } else {
+          schemaType = { type: schema[elKey] };
+        }
+
+        keyValidation(elKey, schemaType);
+        valueValidation(element, elKey, schemaType);
+      });
+
+    } else {
+      keyValidation('array', schema);
+      valueValidation(element, 'array', { type: schema });
+    }
   });
 }
 
@@ -61,7 +80,6 @@ function requiredFieldValidation (data: Array<any>, schema: SCHEMA): Array<strin
 // validate schema
 export default function schemaValidation (data: Array<any>, schema: SCHEMA): bool {
   const requiredFields = requiredFieldValidation(data, schema);
-
 
   keyAndPairValidation(data, schema, requiredFields);
 
