@@ -10,6 +10,7 @@
     "JSON"
   ],
   "scripts": {
+    "build": "webpack",
     "start": "webpack --config --watch || true",
     "flow": "flow check; [[ $?=0||$?=2 ]]",
     "flow:watch": "watch 'npm run flow' ./src",
