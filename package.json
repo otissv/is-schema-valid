@@ -1,8 +1,11 @@
 {
   "name": "is-schema",
   "version": "0.1.0",
-  "description": "Checks if object literal is the correct schema",
+  "description": "Checks if object literal has the correct schema",
   "main": "./lib/index.js",
+  "repository": "https://github.com/otissv/is-schema.git",
+  "author": "Otis Virginie",
+  "license": "MIT",
   "keywords": [
     "schema",
     "validation",
@@ -23,8 +26,6 @@
     "test:spec": "npm run tape:spec",
     "test:watch": "watch 'npm run tape' ./"
   },
-  "author": "Otis Virginie",
-  "license": "MIT",
   "devDependencies": {
     "babel-eslint": "~5.0.0",
     "babel-istanbul": "~0.6.1",
