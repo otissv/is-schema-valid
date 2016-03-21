@@ -7,9 +7,9 @@ import isSchema from '../lib';
 type OBJECT = { [key: string]: any };
 
 
-test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: OBJECT) => {
+test('Schema Validation : isSchema(data, schema) -> VALID.', (nested: OBJECT) => {
 
-  nested.test('Object validation : isSchema({}, schema) -> SCHEMA | Error.', (assert: OBJECT) => {
+  nested.test('Object validation : isSchema({}, schema) -> VALID.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
@@ -39,7 +39,7 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
     const collection = isSchema(schema)(data);
     const expectCollection = { valid: true };
     assert.deepEqual(collection, expectCollection,
-      'Object passes schema validation. Returns true if passed else false if failed');
+      'Object passes schema validation. Returns { valid: true }');
 
 
     const dataMissingRequiredField = {
@@ -56,7 +56,7 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
     const missingRequireField = isSchema(schema)(dataMissingRequiredField).valid;
     const expectMissingRequireField = false;
     assert.deepEqual(missingRequireField, expectMissingRequireField,
-      'Object does not pass if require field is missing not in schema. Throws Error.');
+      'Object does not pass if require field is missing not in schema. Returns { valid: false }.');
 
 
     const dataWithExtraField = {
@@ -75,7 +75,7 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
     const invalidKey = isSchema(schema)(dataWithExtraField).valid;
     const expectInvalidKey = false;
     assert.deepEqual(invalidKey, expectInvalidKey,
-      'Object did not pass keys invalid keys');
+      'Object did not pass keys invalid keys. Returns { valid: false }.');
 
 
     const dataWithINcorrectType = {
@@ -93,13 +93,13 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
     const invalidType = isSchema(schema)(dataWithINcorrectType).valid;
     const expectInvalidType = false;
     assert.deepEqual(invalidType, expectInvalidType,
-      'Object does not pass value if type is not the same as schema key/value. Throws Error.');
+      'Object does not pass value if type is not the same as schema key/value. Returns { valid: false }.');
 
     assert.end();
   });
 
 
-  nested.test('Collection validation: [{}, {}].forEach(isSchema([], schema)) -> SCHEMA | Error.', (assert: OBJECT) => {
+  nested.test('Collection validation: [{}, {}].forEach(isSchema([], schema)) -> VALID.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
@@ -133,7 +133,7 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
     const collection = data.map((element: OBJECT) => isSchema(schema)(element)).every((o: OBJECT): bool => o.valid === true);
     const expectCollection = true;
     assert.deepEqual(collection, expectCollection,
-      'Collection passed schema validation. Returns array');
+      'Collection passed schema validation. Returns { valid: true }.');
 
     assert.end();
   });

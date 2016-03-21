@@ -2,7 +2,13 @@
 
 // Flow types
 type OBJECT = { [key: string]: any };
-type SCHEMA = { [key: string]: any };
+type SCHEMA = { [key: OBJECT]: any };
+type VALID = {
+  [valid: string]: any,
+  [name: ?string] : string,
+  [message: ?string]: string,
+  [stack: ?string]: OBJECT
+};
 
 
 // check object structure matches Collection schema
@@ -76,7 +82,7 @@ function requiredFieldValidation (schema: SCHEMA): Array<string> {
 
 
 // validate schema
-export default function isSchemaValid (schema: SCHEMA): bool | OBJECT {
+export default function isSchemaValid (schema: SCHEMA): VALID | OBJECT {
   return function (data: OBJECT): bool {
     const requiredFields = requiredFieldValidation(schema);
 
