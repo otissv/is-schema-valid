@@ -8,7 +8,7 @@ type SCHEMA = { [key: string]: any };
 // check object structure matches Collection schema
 function keyValidation (type: string) {
   if (type == null) {
-    throw new Error('Schema Key Error: A key is not a valid schema key.');
+    throw new TypeError('Schema Key Error: A key is not a valid schema key.');
   }
 }
 
@@ -19,10 +19,10 @@ function valueValidation (data: OBJECT, key: string, schemaType: string) {
 
   if (schemaType.type === 'array') {
     // if array call isSchema to validate nested array.
-    data.forEach((element: any) => isSchema(element, schemaType.schema));
+    data.forEach((element: any) => isSchemaValid(element, schemaType.schema));
 
   } else if (typeof data !== type) {
-    throw new Error(`Schema Value Error: ${key} value is not ${type} type.`);
+    throw new TypeError(`Schema Value Error: ${key} value is not ${type} type.`);
   }
 }
 
@@ -76,13 +76,21 @@ function requiredFieldValidation (schema: SCHEMA): Array<string> {
 
 
 // validate schema
-export default function isSchema (schema: SCHEMA): bool {
+export default function isSchemaValid (schema: SCHEMA): bool | OBJECT {
   return function (data: OBJECT): bool {
     const requiredFields = requiredFieldValidation(schema);
 
-    keyAndPairValidation(data, schema, requiredFields);
 
-    // if pass validation return true else false if failed
-    return true;
+    try {
+      keyAndPairValidation(data, schema, requiredFields);
+      return { valid: true };
+    } catch (error) {
+      return {
+        valid: false,
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      };
+    }
   };
 }

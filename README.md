@@ -2,9 +2,6 @@
 
 Schema validation for object literals.
 
-#Usage
-isSchemaValid method checks if object literal is the correct schema.
-
 
 ##Installation
 `npm install is-schema-valid`
@@ -12,6 +9,9 @@ isSchemaValid method checks if object literal is the correct schema.
 
 ##Usage
 The isSchemaValid method takes a schema and returns a function that takes an object.
+
+The returning function checks if object literal is the correct schema and returns an object with a valid key.
+Valid key will be true if the object passes or false if the object fails.
 
 ```
 import isSchema from 'is-schema-valid';
@@ -34,7 +34,6 @@ const schema = {
 };
 ```
 
-
 ### Required keys
 To make a key required set the required value to true.
 ```
@@ -43,8 +42,8 @@ const schema = {
 }
 ```
 
-
 ###Types
+
 ####Boolean
 If value is set to 'boolean' it will only accept boolean values
 
@@ -59,12 +58,11 @@ Arrays are defined with a single item which is the type of items the array with 
 Arrays cannot have mixed types.
 
 ```
-const schema = { tags: ['string']}
+const schema = { tags: ['string'] }
 ```
 
-
 ####Nested schemas
-Schemas can be nested by setting a schema keys value to anther schema.
+Schemas can be nested by setting a schema keys value to another schema.
 
 
 ```
@@ -76,6 +74,16 @@ const commentSchema = {
 const schema = { comments: [commentSchema] }
 ```
 
+##Errors
+When there is a failure an error object is returned.
+```
+{
+  valid: false,
+  name: 'TypeError'
+  message: 'Error message'
+  stack: error.stack,
+}
+```
 
 ##Example
 ```
@@ -109,6 +117,10 @@ const data = {
 
 isSchema(schema)(data);
 ```
+
+##TODO
+- enums
+- validation
 
 
 ##Scripts

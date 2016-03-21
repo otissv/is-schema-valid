@@ -5,7 +5,6 @@ import isSchema from '../lib';
 
 // Flow types
 type OBJECT = { [key: string]: any };
-type SCHEMA = { [key: string]: any };
 
 
 test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: OBJECT) => {
@@ -17,19 +16,19 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
     };
 
     const schema = {
-      title: { type: 'string', required: true },
-      author: 'string',
+      title  : { type: 'string', required: true },
+      author : 'string',
       summary: 'string',
-      tags: ['string'],
+      tags   : ['string'],
       comments: [commentSchema],
       views: 'number'
     };
 
     const data = {
-      title: 'A journey from krypton',
-      author: 'Superman',
+      title  : 'A journey from krypton',
+      author : 'Superman',
       summary: 'The story of how superman traveled to earth.',
-      tags: ['superhero', 'DC comics', 'Metropolis'],
+      tags   : ['superhero', 'DC comics', 'Metropolis'],
       comments: [
         {comment: 'firstComment', commenter: 'someone'},
         {comment: 'anotherComment', commenter: 'someoneElse'}
@@ -38,15 +37,15 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
     };
 
     const collection = isSchema(schema)(data);
-    const expectCollection = true;
+    const expectCollection = { valid: true };
     assert.deepEqual(collection, expectCollection,
       'Object passes schema validation. Returns true if passed else false if failed');
 
 
     const dataMissingRequiredField = {
-      author: 'Superman',
-      summary: 'The story of how superman traveled to earth.',
-      tags: ['superhero', 'DC comics', 'Metropolis'],
+      author  : 'Superman',
+      summary : 'The story of how superman traveled to earth.',
+      tags    : ['superhero', 'DC comics', 'Metropolis'],
       comments: [
         {comment: 'firstComment', commenter: 'someone'},
         {comment: 'anotherComment', commenter: 'someoneElse'}
@@ -54,52 +53,36 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
       views: 15000
     };
 
-    const testThrow3 = (): SCHEMA | string => {
-      try {
-        return isSchema(schema)(dataMissingRequiredField);
-      } catch (err) {
-        return err.toString();
-      }
-    };
-
-    const missingRequireField = testThrow3();
-    const expectMissingRequireField = 'Error: Schema Required Field Error: Required field title is missing.';
+    const missingRequireField = isSchema(schema)(dataMissingRequiredField).valid;
+    const expectMissingRequireField = false;
     assert.deepEqual(missingRequireField, expectMissingRequireField,
       'Object does not pass if require field is missing not in schema. Throws Error.');
 
 
     const dataWithExtraField = {
-      title: 'A journey from krypton',
-      author: 'Superman',
-      summary: 'The story of how superman traveled to earth.',
-      tags: ['superhero', 'DC comics', 'Metropolis'],
+      title   : 'A journey from krypton',
+      author  : 'Superman',
+      summary : 'The story of how superman traveled to earth.',
+      tags    : ['superhero', 'DC comics', 'Metropolis'],
       comments: [
         {comment: 'firstComment', commenter: 'someone'},
         {comment: 'anotherComment', commenter: 'someoneElse'}
       ],
-      views: 15000,
+      views : 15000,
       rating: 5
     };
 
-    const testThrow1 = (): SCHEMA | string => {
-      try {
-        return isSchema(schema)(dataWithExtraField);
-      } catch (err) {
-        return err.toString();
-      }
-    };
-
-    const invalidKey = testThrow1();
-    const expectInvalidKey = 'Error: Schema Key Error: A key is not a valid schema key.';
+    const invalidKey = isSchema(schema)(dataWithExtraField).valid;
+    const expectInvalidKey = false;
     assert.deepEqual(invalidKey, expectInvalidKey,
       'Object did not pass keys invalid keys');
 
 
     const dataWithINcorrectType = {
-      title: 'A journey from krypton',
-      author: 'Superman',
-      summary: 'The story of how superman traveled to earth.',
-      tags: ['superhero', 'DC comics', 'Metropolis'],
+      title   : 'A journey from krypton',
+      author  : 'Superman',
+      summary : 'The story of how superman traveled to earth.',
+      tags    : ['superhero', 'DC comics', 'Metropolis'],
       comments: [
         {comment: 'firstComment', commenter: 'someone'},
         {comment: 'anotherComment', commenter: 'someoneElse'}
@@ -107,16 +90,8 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
       views: '15000'
     };
 
-    const testThrow2 = (): SCHEMA | string => {
-      try {
-        return isSchema(schema)(dataWithINcorrectType);
-      } catch (err) {
-        return err.toString();
-      }
-    };
-
-    const invalidType = testThrow2();
-    const expectInvalidType = 'Error: Schema Value Error: views value is not number type.';
+    const invalidType = isSchema(schema)(dataWithINcorrectType).valid;
+    const expectInvalidType = false;
     assert.deepEqual(invalidType, expectInvalidType,
       'Object does not pass value if type is not the same as schema key/value. Throws Error.');
 
@@ -131,10 +106,10 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
     };
 
     const schema = {
-      title: 'string',
-      author: 'string',
-      summary: 'string',
-      tags: ['string'],
+      title   : { type: 'string', required: true },
+      author  : { type: 'string', required: true },
+      summary : { type: 'string', required: true },
+      tags    : ['string'],
       comments: [commentSchema]
     };
 
@@ -155,8 +130,8 @@ test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: O
       }
     ];
 
-    const collection = data.map((element: OBJECT) => isSchema(schema)(element));
-    const expectCollection = [ true, true ];
+    const collection = data.map((element: OBJECT) => isSchema(schema)(element)).every((o: OBJECT): bool => o.valid === true);
+    const expectCollection = true;
     assert.deepEqual(collection, expectCollection,
       'Collection passed schema validation. Returns array');
 
