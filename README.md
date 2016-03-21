@@ -1,19 +1,21 @@
-#Is Schema
+#Is Schema Valid
 
 Schema validation for object literals.
 
 #Usage
-isSchema method checks if object literal is the correct schema.
+isSchemaValid method checks if object literal is the correct schema.
 
 
 ##Installation
-`npm install is-schema`
+`npm install isSchema-valid`
 
 
 ##Usage
-The isSchema method takes a schema and returns a function that takes an object.
+The isSchemaValid method takes a schema and returns a function that takes an object.
 
 ```
+import isSchema from 'is-schema-valid';
+
 isSchema(schema)(data);
 ```
 
@@ -77,7 +79,7 @@ const schema = { comments: [commentSchema] }
 
 ##Example
 ```
-import isSchema from 'is-schema';
+import isSchema from 'is-schema-valid';
 
 const commentSchema = {
   comment: 'string',
