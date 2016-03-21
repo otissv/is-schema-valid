@@ -20,11 +20,7 @@ module.exports = {
 
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.NoErrorsPlugin(),
-    new webpack.ProvidePlugin({
-      React   : 'react',
-      ReactDOM: 'react-dom'
-    })
+    new webpack.NoErrorsPlugin()
   ],
 
   module: {
