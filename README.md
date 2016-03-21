@@ -7,7 +7,7 @@ isSchemaValid method checks if object literal is the correct schema.
 
 
 ##Installation
-`npm install isSchema-valid`
+`npm install is-schema-valid`
 
 
 ##Usage
