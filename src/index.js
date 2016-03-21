@@ -5,30 +5,30 @@ type OBJECT = { [key: string]: any };
 type SCHEMA = { [key: string]: any };
 
 // check object structure matches Collection schema
-function keyValidation (key: string, schemaType: string) {
-  if (schemaType.type == null) {
-    throw new Error(`Schema Key Error: ${key} key is not a schema key.`);
+function keyValidation (type: string) {
+  if (type == null) {
+    throw new Error('Schema Key Error: A key is not a valid schema key.');
   }
 }
 
 // check all object pairs values have the correst typeof as stated in Collection Schema
-function valueValidation (element: OBJECT, key: string, schemaType: string) {
+function valueValidation (data: OBJECT, key: string, schemaType: string) {
   const { type } = schemaType;
 
   if (schemaType.type === 'array') {
     // if array call schemaValidation to validate nested array.
-    schemaValidation(element[key], schemaType.schema);
+    data.forEach((element: any) => schemaValidation(element, schemaType.schema));
 
-  } else if (typeof element[key] !== type) {
+  } else if (typeof data !== type) {
     throw new Error(`Schema Value Error: ${key} value is not ${type} type.`);
   }
 }
 
 
 // check object has all requireds fields in the Collection schema
-function requiredValidation (element: OBJECT, fields: Array<any>) {
+function requiredValidation (data: OBJECT, fields: Array<any>) {
   fields.forEach((item: any) => {
-    if (!element[item]) {
+    if (!data[item]) {
       throw new Error(`Schema Required Field Error: Required field ${item} is missing.`);
     }
   });
@@ -36,38 +36,37 @@ function requiredValidation (element: OBJECT, fields: Array<any>) {
 
 
 // validate all elements in the Collection
-function keyAndPairValidation (data: Array<any>, schema: SCHEMA, requiredFields: Array<string>) {
-  data.forEach((element: OBJECT) => {
-    requiredValidation(element, requiredFields);
+function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Array<string>) {
 
-    if (typeof element === 'object') {
-      Object.keys(element).forEach((elKey: any) => {
-        let schemaType;
+  requiredValidation(data, requiredFields);
 
-        if (Array.isArray(schema[elKey])) {
-          schemaType = { type: 'array', schema: schema[elKey][0] };
+  if (typeof data === 'object') {
+    Object.keys(data).forEach((key: any) => {
+      let schemaType;
 
-        } else if (typeof schema[elKey] === 'object') {
-          schemaType = { type: schema[elKey].type };
+      if (Array.isArray(schema[key])) {
+        schemaType = { type: 'array', schema: schema[key][0] };
 
-        } else {
-          schemaType = { type: schema[elKey] };
-        }
+      } else if (typeof schema[key] === 'object') {
+        schemaType = { type: schema[key].type };
 
-        keyValidation(elKey, schemaType);
-        valueValidation(element, elKey, schemaType);
-      });
+      } else {
+        schemaType = { type: schema[key] };
+      }
 
-    } else {
-      // if element is not an object
-      valueValidation({ array: element }, 'array', { type: schema });
-    }
-  });
+      keyValidation(schemaType.type);
+      valueValidation(data[key], key, schemaType);
+    });
+
+  } else {
+    // if element is not an object
+    valueValidation(data, 'array', { type: schema });
+  }
 }
 
 
 // extract required fields from Collection schema
-function requiredFieldValidation (data: Array<any>, schema: SCHEMA): Array<string> {
+function requiredFieldValidation (schema: SCHEMA): Array<string> {
   return Object.keys(schema).map((key: string): string => {
     if (schema[key].required === true) return key;
   }).filter((items: 'string') => items);
@@ -75,8 +74,8 @@ function requiredFieldValidation (data: Array<any>, schema: SCHEMA): Array<strin
 
 
 // validate schema
-export default function schemaValidation (data: Array<any>, schema: SCHEMA): bool {
-  const requiredFields = requiredFieldValidation(data, schema);
+export default function schemaValidation (data: OBJECT, schema: SCHEMA): bool {
+  const requiredFields = requiredFieldValidation(schema);
 
   keyAndPairValidation(data, schema, requiredFields);
 
