@@ -16,7 +16,7 @@ function valueValidation (element: OBJECT, key: string, schemaType: string) {
   const { type } = schemaType;
 
   if (schemaType.type === 'array') {
-    // if array call schemaValidation
+    // if array call schemaValidation to validate nested array.
     schemaValidation(element[key], schemaType.schema);
 
   } else if (typeof element[key] !== type) {
@@ -39,6 +39,7 @@ function requiredValidation (element: OBJECT, fields: Array<any>) {
 function keyAndPairValidation (data: Array<any>, schema: SCHEMA, requiredFields: Array<string>) {
   data.forEach((element: OBJECT) => {
     requiredValidation(element, requiredFields);
+
     if (typeof element === 'object') {
       Object.keys(element).forEach((elKey: any) => {
         let schemaType;
@@ -58,6 +59,7 @@ function keyAndPairValidation (data: Array<any>, schema: SCHEMA, requiredFields:
       });
 
     } else {
+      // if element is not an object
       valueValidation({ array: element }, 'array', { type: schema });
     }
   });
@@ -75,7 +77,6 @@ function requiredFieldValidation (data: Array<any>, schema: SCHEMA): Array<strin
 // validate schema
 export default function schemaValidation (data: Array<any>, schema: SCHEMA): bool {
   const requiredFields = requiredFieldValidation(data, schema);
-
 
   keyAndPairValidation(data, schema, requiredFields);
 
