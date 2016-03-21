@@ -17,8 +17,8 @@
     "lint:watch": "watch 'npm run lint' ./",
     "tape": "babel-node test-runner.js | tap-min  && date || true && date",
     "tape:spec": "babel-node test-runner.js | tap-difflet || true && date",
-    "test": "nyc npm run tape",
-    "test:spec": "nyc npm run tape:spec",
+    "test": "npm run tape",
+    "test:spec": "npm run tape:spec",
     "test:watch": "watch 'npm run tape' ./"
   },
   "author": "Otis Virginie",
