@@ -4,6 +4,7 @@
 type OBJECT = { [key: string]: any };
 type SCHEMA = { [key: string]: any };
 
+
 // check object structure matches Collection schema
 function keyValidation (type: string) {
   if (type == null) {
@@ -11,13 +12,14 @@ function keyValidation (type: string) {
   }
 }
 
+
 // check all object pairs values have the correst typeof as stated in Collection Schema
 function valueValidation (data: OBJECT, key: string, schemaType: string) {
   const { type } = schemaType;
 
   if (schemaType.type === 'array') {
-    // if array call schemaValidation to validate nested array.
-    data.forEach((element: any) => schemaValidation(element, schemaType.schema));
+    // if array call isSchema to validate nested array.
+    data.forEach((element: any) => isSchema(element, schemaType.schema));
 
   } else if (typeof data !== type) {
     throw new Error(`Schema Value Error: ${key} value is not ${type} type.`);
@@ -74,11 +76,13 @@ function requiredFieldValidation (schema: SCHEMA): Array<string> {
 
 
 // validate schema
-export default function schemaValidation (data: OBJECT, schema: SCHEMA): bool {
-  const requiredFields = requiredFieldValidation(schema);
+export default function isSchema (schema: SCHEMA): bool {
+  return function (data: OBJECT): bool {
+    const requiredFields = requiredFieldValidation(schema);
 
-  keyAndPairValidation(data, schema, requiredFields);
+    keyAndPairValidation(data, schema, requiredFields);
 
-  // if pass validation return true else false if failed
-  return true;
+    // if pass validation return true else false if failed
+    return true;
+  };
 }

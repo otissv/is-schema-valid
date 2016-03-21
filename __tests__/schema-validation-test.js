@@ -1,6 +1,6 @@
 'use strict';
 import test from 'tape';
-import schemaValidation from '../lib';
+import isSchema from '../lib';
 
 
 // Flow types
@@ -8,9 +8,9 @@ type OBJECT = { [key: string]: any };
 type SCHEMA = { [key: string]: any };
 
 
-test('Schema Validation : schemaValidation(data, schema) -> SCHEMA | Error.', (nested: OBJECT) => {
+test('Schema Validation : isSchema(data, schema) -> SCHEMA | Error.', (nested: OBJECT) => {
 
-  nested.test('Object validation : schemaValidation({}, schema) -> SCHEMA | Error.', (assert: OBJECT) => {
+  nested.test('Object validation : isSchema({}, schema) -> SCHEMA | Error.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
@@ -37,7 +37,7 @@ test('Schema Validation : schemaValidation(data, schema) -> SCHEMA | Error.', (n
       views: 15000
     };
 
-    const collection = schemaValidation(data, schema);
+    const collection = isSchema(schema)(data);
     const expectCollection = true;
     assert.deepEqual(collection, expectCollection,
       'Object passes schema validation. Returns true if passed else false if failed');
@@ -56,7 +56,7 @@ test('Schema Validation : schemaValidation(data, schema) -> SCHEMA | Error.', (n
 
     const testThrow3 = (): SCHEMA | string => {
       try {
-        return schemaValidation(dataMissingRequiredField, schema);
+        return isSchema(schema)(dataMissingRequiredField);
       } catch (err) {
         return err.toString();
       }
@@ -83,7 +83,7 @@ test('Schema Validation : schemaValidation(data, schema) -> SCHEMA | Error.', (n
 
     const testThrow1 = (): SCHEMA | string => {
       try {
-        return schemaValidation(dataWithExtraField, schema);
+        return isSchema(schema)(dataWithExtraField);
       } catch (err) {
         return err.toString();
       }
@@ -109,7 +109,7 @@ test('Schema Validation : schemaValidation(data, schema) -> SCHEMA | Error.', (n
 
     const testThrow2 = (): SCHEMA | string => {
       try {
-        return schemaValidation(dataWithINcorrectType, schema);
+        return isSchema(schema)(dataWithINcorrectType);
       } catch (err) {
         return err.toString();
       }
@@ -124,7 +124,7 @@ test('Schema Validation : schemaValidation(data, schema) -> SCHEMA | Error.', (n
   });
 
 
-  nested.test('Collection validation: [{}, {}].forEach(schemaValidation([], schema)) -> SCHEMA | Error.', (assert: OBJECT) => {
+  nested.test('Collection validation: [{}, {}].forEach(isSchema([], schema)) -> SCHEMA | Error.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
@@ -155,7 +155,7 @@ test('Schema Validation : schemaValidation(data, schema) -> SCHEMA | Error.', (n
       }
     ];
 
-    const collection = data.map((element: OBJECT) => schemaValidation(element, schema));
+    const collection = data.map((element: OBJECT) => isSchema(schema)(element));
     const expectCollection = [ true, true ];
     assert.deepEqual(collection, expectCollection,
       'Collection passed schema validation. Returns array');
