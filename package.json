@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Checks if object literal has the correct schema",
   "main": "./lib/index.js",
-  "repository": "https://github.com/otissv/is-schema.git",
+  "repository": "https://github.com/otissv/is-schema-valid.git",
   "author": "Otis Virginie",
   "license": "MIT",
   "keywords": [

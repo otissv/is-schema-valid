@@ -119,8 +119,8 @@ isSchema(schema)(data);
 ```
 
 ##TODO
-- enums
-- validation
+- enums = oneOf, anyOf
+- match
 
 
 ##Scripts

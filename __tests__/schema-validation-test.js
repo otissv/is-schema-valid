@@ -7,7 +7,7 @@ import isSchema from '../lib';
 type OBJECT = { [key: string]: any };
 
 
-test('Schema Validation : isSchema(data, schema) -> VALID.', (nested: OBJECT) => {
+test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
 
   nested.test('Object validation : isSchema({}, schema) -> VALID.', (assert: OBJECT) => {
     const commentSchema = {
@@ -99,7 +99,7 @@ test('Schema Validation : isSchema(data, schema) -> VALID.', (nested: OBJECT) =>
   });
 
 
-  nested.test('Collection validation: [{}, {}].forEach(isSchema([], schema)) -> VALID.', (assert: OBJECT) => {
+  nested.test('Collection validation: [{}, {}].forEach(isSchema(schema)([])) -> VALID.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
@@ -133,6 +133,71 @@ test('Schema Validation : isSchema(data, schema) -> VALID.', (nested: OBJECT) =>
     const collection = data.map((element: OBJECT) => isSchema(schema)(element)).every((o: OBJECT): bool => o.valid === true);
     const expectCollection = true;
     assert.deepEqual(collection, expectCollection,
+      'Collection passed schema validation. Returns { valid: true }.');
+
+    assert.end();
+  });
+
+
+  nested.test('Custom Validation: [{}, {}].forEach(isSchema(schema)([], [validation])) -> VALID.', (assert: OBJECT) => {
+    const validation = [
+
+      function (data: any): any {
+        // data length cannot be less than 8
+        if (data.length < 8) {
+          throw new Error(`Length Error: ${data} length cannot be less than 8`);
+        }
+        return data;
+      },
+
+      function (data: any): any {
+        // data first charater must be caitalised
+        if (data.charAt(0) !== data.charAt(0).toUpperCase()) {
+          throw new Error('Author name must start with a capital letter');
+        }
+        return data;
+      }
+    ];
+
+    const commentSchema = {
+      comment: 'string',
+      commenter: 'string'
+    };
+
+    const schema = {
+      title   : 'string',
+      author  : { type: 'string', validation },
+      summary : 'string',
+      tags    : ['string'],
+      comments: [commentSchema]
+    };
+
+
+    const supermanData = {
+      title: 'A journey from krypton',
+      author: 'Superman',
+      summary: 'The story of how superman traveled to earth.',
+      tags: ['superhero', 'DC comics', 'Metropolis'],
+      comments: [{comment: 'comment1', commenter: 'someone'}]
+    };
+
+    const validArticle = isSchema(schema)(supermanData).valid;
+    const expectedValidArticle = true;
+    assert.deepEqual(validArticle, expectedValidArticle,
+      'Collection passed schema validation. Returns { valid: true }.');
+
+
+    const batmanData = {
+      title: 'Gothem night',
+      author: 'batman, The Dark Kninght',
+      summary: 'Expling the night life in Gothem city.',
+      tags: ['superhero', 'DC comics', 'Gothem'],
+      comments: [{comment: 'comment1', commenter: 'someone'}]
+    };
+
+    const invalidArticle = isSchema(schema)(batmanData).valid;
+    const expectedInvalidArticle = false;
+    assert.deepEqual(expectedInvalidArticle, invalidArticle,
       'Collection passed schema validation. Returns { valid: true }.');
 
     assert.end();

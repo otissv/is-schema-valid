@@ -1,5 +1,9 @@
 'use strict';
 
+import customValidation from './custom-validation';
+import * as builtInValidators from './built-in-validators';
+
+
 // Flow types
 type OBJECT = { [key: string]: any };
 type SCHEMA = { [key: OBJECT]: any };
@@ -48,6 +52,7 @@ function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Arr
 
   requiredValidation(data, requiredFields);
 
+
   if (typeof data === 'object') {
     Object.keys(data).forEach((key: any) => {
       let schemaType;
@@ -57,6 +62,9 @@ function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Arr
 
       } else if (typeof schema[key] === 'object') {
         schemaType = { type: schema[key].type };
+
+        // run custom validation
+        schema[key].validation && customValidation(schema[key].validation)(data[key]);
 
       } else {
         schemaType = { type: schema[key] };
@@ -86,9 +94,9 @@ export default function isSchemaValid (schema: SCHEMA): VALID | OBJECT {
   return function (data: OBJECT): bool {
     const requiredFields = requiredFieldValidation(schema);
 
-
     try {
       keyAndPairValidation(data, schema, requiredFields);
+
       return { valid: true };
     } catch (error) {
       return {
@@ -100,3 +108,6 @@ export default function isSchemaValid (schema: SCHEMA): VALID | OBJECT {
     }
   };
 }
+
+
+export const validators = { ...builtInValidators };
