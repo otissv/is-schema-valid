@@ -7,7 +7,7 @@ import isSchemaValid from '../lib';
 type OBJECT = { [key: string]: any };
 
 
-test('Schema Validation : isSchemaValid(schema)({}) -> { valid }.', (nested: OBJECT) => {
+test('Schema Validation', (nested: OBJECT) => {
 
   nested.test('Object validation : isSchemaValid(schema)({}) -> { valid }.', (assert: OBJECT) => {
     const commentSchema = {
@@ -152,7 +152,7 @@ test('Schema Validation : isSchemaValid(schema)({}) -> { valid }.', (nested: OBJ
     const validlength = isSchemaValid(schema)(validData).valid;
     const expectedValidLength = true;
     assert.deepEqual(validlength, expectedValidLength,
-      'String length is the equal to length validator. Returns { valid: true }.');
+      'String length is equal to length validator. Returns { valid: true }.');
 
 
     const invalidData = {
@@ -283,30 +283,30 @@ test('Schema Validation : isSchemaValid(schema)({}) -> { valid }.', (nested: OBJ
     assert.end();
   });
 
-  nested.test('match validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }..', (assert: OBJECT) => {
+
+  nested.test('oneOf validator: [{}, {}].forEach(isSchemaValid(schema)({}, { oneOf })) -> { valid }..', (assert: OBJECT) => {
     const schema = {
-      str: { type: 'string', match: /[A-E]/gi }
+      str: { type: 'string', oneOf: ['one', 'two', 'three'] }
     };
 
 
     const validData = {
-      str: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+      str: 'one'
     };
 
     const validMin = isSchemaValid(schema)(validData).valid;
     const expectedValidMin = true;
     assert.deepEqual(validMin, expectedValidMin,
-      'Matxhex regex. Returns { valid: true }.');
-
+      'Does allows only one of enum values. Returns { valid: true }.');
 
     const invalidData = {
-      str: 'HIJKLMNOPQRSTUVWXYZhijklmnopqrstuvwxyz'
+      str: 'four'
     };
 
     const invalidMin = isSchemaValid(schema)(invalidData).valid;
     const expectedInValidMin = false;
     assert.deepEqual(invalidMin, expectedInValidMin,
-      'Does not match regex. Returns { valid: false }.');
+      'Does allow a value not in the enum. Returns { valid: false }.');
 
     assert.end();
   });

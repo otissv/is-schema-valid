@@ -120,7 +120,6 @@ isSchema(schema)(data);
 
 ##TODO
 - enums = oneOf, anyOf
-- match
 
 
 ##Scripts

@@ -32,7 +32,8 @@ function valueValidation (data: OBJECT, key: string, schemaType: string) {
     maxLength,
     max,
     min,
-    match
+    match,
+    oneOf
   } = schemaType;
 
   // type validation
@@ -43,6 +44,8 @@ function valueValidation (data: OBJECT, key: string, schemaType: string) {
   } else if (typeof data !== type) {
     throw new TypeError(`Schema Value Error: ${key} value is not ${type} type.`);
   }
+
+  oneOf && builtInValidators.oneOf(oneOf)(data);
 
   // string validation
   if (type === 'string') {
@@ -57,6 +60,8 @@ function valueValidation (data: OBJECT, key: string, schemaType: string) {
     max && builtInValidators.max(max)(data);
     min && builtInValidators.min(min)(data);
   }
+
+
 }
 
 
