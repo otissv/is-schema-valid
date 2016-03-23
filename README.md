@@ -140,6 +140,26 @@ Value matches regex.
 ```
 
 ## Custom validation
+Custom validators can be added by using the validation key. The validation key takes an array of functions.
+
+If the validaion fails an object with a error key must be returned where the error value is the message for this error error.
+
+If the validation passes the function must return the input value so that it can be passed to the next validator.
+
+The function must be pure and not mutate the value.
+
+```
+moreThan7 = function(value) {
+  if (value.length < 8) {
+    return { error: `Length Error: ${data} length cannot be less than 8` };
+  }
+  return value;
+};
+
+const schema = {
+  title: { type: 'string', validation: [moreThan7] }
+}
+```
 
 ## Example
 ```
