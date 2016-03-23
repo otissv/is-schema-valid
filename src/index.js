@@ -25,14 +25,37 @@ function keyValidation (type: string) {
 
 // check all object pairs values have the correst typeof as stated in Collection Schema
 function valueValidation (data: OBJECT, key: string, schemaType: string) {
-  const { type } = schemaType;
+  const {
+    type,
+    length,
+    minLength,
+    maxLength,
+    max,
+    min,
+    match
+  } = schemaType;
 
+  // type validation
   if (schemaType.type === 'array') {
     // if array call isSchema to validate nested array.
     data.forEach((element: any) => isSchemaValid(element, schemaType.schema));
 
   } else if (typeof data !== type) {
     throw new TypeError(`Schema Value Error: ${key} value is not ${type} type.`);
+  }
+
+  // string validation
+  if (type === 'string') {
+    length && builtInValidators.length(length)(data);
+    maxLength && builtInValidators.maxLength(maxLength)(data);
+    minLength && builtInValidators.minLength(minLength)(data);
+    match && builtInValidators.match(match)(data);
+  }
+
+  // number validation
+  if (type === 'number') {
+    max && builtInValidators.max(max)(data);
+    min && builtInValidators.min(min)(data);
   }
 }
 
@@ -61,7 +84,7 @@ function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Arr
         schemaType = { type: 'array', schema: schema[key][0] };
 
       } else if (typeof schema[key] === 'object') {
-        schemaType = { type: schema[key].type };
+        schemaType = schema[key];
 
         // run custom validation
         schema[key].validation && customValidation(schema[key].validation)(data[key]);
@@ -82,7 +105,7 @@ function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Arr
 
 
 // extract required fields from Collection schema
-function requiredFieldValidation (schema: SCHEMA): Array<string> {
+function getRequiredFields (schema: SCHEMA): Array<string> {
   return Object.keys(schema).map((key: string): string => {
     if (schema[key].required === true) return key;
   }).filter((items: 'string') => items);
@@ -92,7 +115,7 @@ function requiredFieldValidation (schema: SCHEMA): Array<string> {
 // validate schema
 export default function isSchemaValid (schema: SCHEMA): VALID | OBJECT {
   return function (data: OBJECT): bool {
-    const requiredFields = requiredFieldValidation(schema);
+    const requiredFields = getRequiredFields(schema);
 
     try {
       keyAndPairValidation(data, schema, requiredFields);
@@ -108,6 +131,3 @@ export default function isSchemaValid (schema: SCHEMA): VALID | OBJECT {
     }
   };
 }
-
-
-export const validators = { ...builtInValidators };

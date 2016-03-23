@@ -10,7 +10,13 @@ export default function customValidation (middleWare: Array<any>): any {
       if (Array.isArray(value)) {
         return value.map((el: any) => fn(el));
       } else {
-        return fn(value);
+        const valid = fn(value);
+
+        if (valid.error) {
+          throw new Error(valid.error);
+        } else {
+          return fn(value);
+        }
       }
     };
 
