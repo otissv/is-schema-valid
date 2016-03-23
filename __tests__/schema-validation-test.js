@@ -1,15 +1,15 @@
 'use strict';
 import test from 'tape';
-import isSchema from '../lib';
+import isSchemaValid from '../lib';
 
 
 // Flow types
 type OBJECT = { [key: string]: any };
 
 
-test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
+test('Schema Validation : isSchemaValid(schema)({}) -> { valid }.', (nested: OBJECT) => {
 
-  nested.test('Object validation : isSchema({}, schema) -> VALID.', (assert: OBJECT) => {
+  nested.test('Object validation : isSchemaValid(schema)({}) -> { valid }.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
@@ -36,7 +36,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       views: 15000
     };
 
-    const collection = isSchema(schema)(data);
+    const collection = isSchemaValid(schema)(data);
     const expectCollection = { valid: true };
     assert.deepEqual(collection, expectCollection,
       'Object passes schema validation. Returns { valid: true }');
@@ -53,7 +53,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       views: 15000
     };
 
-    const missingRequireField = isSchema(schema)(dataMissingRequiredField).valid;
+    const missingRequireField = isSchemaValid(schema)(dataMissingRequiredField).valid;
     const expectMissingRequireField = false;
     assert.deepEqual(missingRequireField, expectMissingRequireField,
       'Object does not pass if require field is missing not in schema. Returns { valid: false }.');
@@ -72,7 +72,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       rating: 5
     };
 
-    const invalidKey = isSchema(schema)(dataWithExtraField).valid;
+    const invalidKey = isSchemaValid(schema)(dataWithExtraField).valid;
     const expectInvalidKey = false;
     assert.deepEqual(invalidKey, expectInvalidKey,
       'Object did not pass keys invalid keys. Returns { valid: false }.');
@@ -90,7 +90,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       views: '15000'
     };
 
-    const invalidType = isSchema(schema)(dataWithINcorrectType).valid;
+    const invalidType = isSchemaValid(schema)(dataWithINcorrectType).valid;
     const expectInvalidType = false;
     assert.deepEqual(invalidType, expectInvalidType,
       'Object does not pass value if type is not the same as schema key/value. Returns { valid: false }.');
@@ -99,7 +99,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
   });
 
 
-  nested.test('Collection validation: [{}, {}].forEach(isSchema(schema)([])) -> VALID.', (assert: OBJECT) => {
+  nested.test('Collection validation: [{}, {}].forEach(isSchemaValid(schema)({})) -> { valid }.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
@@ -130,7 +130,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       }
     ];
 
-    const collection = data.map((element: OBJECT) => isSchema(schema)(element)).every((o: OBJECT): bool => o.valid === true);
+    const collection = data.map((element: OBJECT) => isSchemaValid(schema)(element)).every((o: OBJECT): bool => o.valid === true);
     const expectCollection = true;
     assert.deepEqual(collection, expectCollection,
       'Collection passed schema validation. Returns { valid: true }.');
@@ -139,7 +139,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
   });
 
 
-  nested.test('validation length: [{}, {}].forEach(isSchema(schema)([], [validators])) -> VALID.', (assert: OBJECT) => {
+  nested.test('length validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       ten   : { type: 'string', length: 10 }
     };
@@ -149,7 +149,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       ten: '0123456789'
     };
 
-    const validlength = isSchema(schema)(validData).valid;
+    const validlength = isSchemaValid(schema)(validData).valid;
     const expectedValidLength = true;
     assert.deepEqual(validlength, expectedValidLength,
       'String length is the equal to length validator. Returns { valid: true }.');
@@ -159,7 +159,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       ten: '123456789'
     };
 
-    const invalidlength = isSchema(schema)(invalidData).valid;
+    const invalidlength = isSchemaValid(schema)(invalidData).valid;
     const expectedInValidLength = false;
     assert.deepEqual(invalidlength, expectedInValidLength,
       'String length is not equal to length validator. Returns { valid: false }.');
@@ -168,7 +168,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
   });
 
 
-  nested.test('validation maxLength: [{}, {}].forEach(isSchema(schema)([], [validators])) -> VALID.', (assert: OBJECT) => {
+  nested.test('maxLength validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       ten   : { type: 'string', maxLength: 10 }
     };
@@ -178,7 +178,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       ten: '0123456789'
     };
 
-    const validlength = isSchema(schema)(validData).valid;
+    const validlength = isSchemaValid(schema)(validData).valid;
     const expectedValidLength = true;
     assert.deepEqual(validlength, expectedValidLength,
       'String length is does not exceed maximum length. Returns { valid: true }.');
@@ -188,7 +188,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       ten: '012345678910'
     };
 
-    const invalidlength = isSchema(schema)(invalidData).valid;
+    const invalidlength = isSchemaValid(schema)(invalidData).valid;
     const expectedInValidLength = false;
     assert.deepEqual(invalidlength, expectedInValidLength,
       'String length cannot exceeds maximum length. Returns { valid: false }.');
@@ -197,7 +197,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
   });
 
 
-  nested.test('validation minLength: [{}, {}].forEach(isSchema(schema)([], [validators])) -> VALID.', (assert: OBJECT) => {
+  nested.test('minLength validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       ten   : { type: 'string', minLength: 10 }
     };
@@ -207,7 +207,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       ten: '0123456789'
     };
 
-    const validlength = isSchema(schema)(validData).valid;
+    const validlength = isSchemaValid(schema)(validData).valid;
     const expectedValidLength = true;
     assert.deepEqual(validlength, expectedValidLength,
       'String length is higher minimum length. Returns { valid: true }.');
@@ -217,7 +217,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       ten: '012345'
     };
 
-    const invalidlength = isSchema(schema)(invalidData).valid;
+    const invalidlength = isSchemaValid(schema)(invalidData).valid;
     const expectedInValidLength = false;
     assert.deepEqual(invalidlength, expectedInValidLength,
       'String length cannot be lower minimum length. Returns { valid: false }.');
@@ -226,7 +226,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
   });
 
 
-  nested.test('validation min: [{}, {}].forEach(isSchema(schema)([], [validators])) -> VALID.', (assert: OBJECT) => {
+  nested.test('min validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       number: { type: 'number', min: 10 }
     };
@@ -236,7 +236,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       number: 20
     };
 
-    const validMin = isSchema(schema)(validData).valid;
+    const validMin = isSchemaValid(schema)(validData).valid;
     const expectedValidMin = true;
     assert.deepEqual(validMin, expectedValidMin,
       'Number is higher minimum number. Returns { valid: true }.');
@@ -246,7 +246,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       ten: 5
     };
 
-    const invalidMin = isSchema(schema)(invalidData).valid;
+    const invalidMin = isSchemaValid(schema)(invalidData).valid;
     const expectedInValidMin = false;
     assert.deepEqual(invalidMin, expectedInValidMin,
       'Number cannot be lower minimum number. Returns { valid: false }.');
@@ -255,7 +255,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
   });
 
 
-  nested.test('validation max: [{}, {}].forEach(isSchema(schema)([], [validators])) -> VALID.', (assert: OBJECT) => {
+  nested.test('max validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       number: { type: 'number', max: 10 }
     };
@@ -265,7 +265,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       number: 6
     };
 
-    const validMin = isSchema(schema)(validData).valid;
+    const validMin = isSchemaValid(schema)(validData).valid;
     const expectedValidMin = true;
     assert.deepEqual(validMin, expectedValidMin,
       'Number is lower maximum number. Returns { valid: true }.');
@@ -275,7 +275,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       ten: 100
     };
 
-    const invalidMin = isSchema(schema)(invalidData).valid;
+    const invalidMin = isSchemaValid(schema)(invalidData).valid;
     const expectedInValidMin = false;
     assert.deepEqual(invalidMin, expectedInValidMin,
       'Number cannot be higher maximum number. Returns { valid: false }.');
@@ -283,7 +283,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
     assert.end();
   });
 
-  nested.test('match validator: [{}, {}].forEach(isSchema(schema)([], [validators])) -> VALID.', (assert: OBJECT) => {
+  nested.test('match validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }..', (assert: OBJECT) => {
     const schema = {
       str: { type: 'string', match: /[A-E]/gi }
     };
@@ -293,7 +293,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       str: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     };
 
-    const validMin = isSchema(schema)(validData).valid;
+    const validMin = isSchemaValid(schema)(validData).valid;
     const expectedValidMin = true;
     assert.deepEqual(validMin, expectedValidMin,
       'Matxhex regex. Returns { valid: true }.');
@@ -303,7 +303,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       str: 'HIJKLMNOPQRSTUVWXYZhijklmnopqrstuvwxyz'
     };
 
-    const invalidMin = isSchema(schema)(invalidData).valid;
+    const invalidMin = isSchemaValid(schema)(invalidData).valid;
     const expectedInValidMin = false;
     assert.deepEqual(invalidMin, expectedInValidMin,
       'Does not match regex. Returns { valid: false }.');
@@ -312,7 +312,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
   });
 
 
-  nested.test('Custom Validation: [{}, {}].forEach(isSchema(schema)([], [validation])) -> VALID.', (assert: OBJECT) => {
+  nested.test('Custom Validation: [{}, {}].forEach(isSchemaValid(schema)({}, [validation])) -> VALID.', (assert: OBJECT) => {
     const validation = [
 
       function (data: any): any {
@@ -354,7 +354,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       comments: [{comment: 'comment1', commenter: 'someone'}]
     };
 
-    const validArticle = isSchema(schema)(supermanData).valid;
+    const validArticle = isSchemaValid(schema)(supermanData).valid;
     const expectedValidArticle = true;
     assert.deepEqual(validArticle, expectedValidArticle,
       'Custom validation passed as expected. Returns { valid: true }.');
@@ -368,7 +368,7 @@ test('Schema Validation : isSchema(schema)([]) -> VALID.', (nested: OBJECT) => {
       comments: [{comment: 'comment1', commenter: 'someone'}]
     };
 
-    const invalidArticle = isSchema(schema)(batmanData).valid;
+    const invalidArticle = isSchemaValid(schema)(batmanData).valid;
     const expectedInvalidArticle = false;
     assert.deepEqual(expectedInvalidArticle, invalidArticle,
       'Custom validation falis as expected. Returns { valid: false }.');
