@@ -284,6 +284,35 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
+  nested.test('match validator: [{}, {}].forEach(isSchemaValid(schema)({}, { match })) -> { valid }.', (assert: OBJECT) => {
+    const schema = {
+      str: { type: 'string', match: /[A-J]/gi }
+    };
+
+
+    const validData = {
+      str: 'kizomba'
+    };
+
+    const validMin = isSchemaValid(schema)(validData).valid;
+    const expectedValidMin = true;
+    assert.deepEqual(validMin, expectedValidMin,
+      'Mathces regex. Returns { valid: true }.');
+
+
+    const invalidData = {
+      str: 'zouk'
+    };
+
+    const invalidMin = isSchemaValid(schema)(invalidData).valid;
+    const expectedInValidMin = false;
+    assert.deepEqual(invalidMin, expectedInValidMin,
+      'Correctly does not match regex. Returns { valid: false }.');
+
+    assert.end();
+  });
+
+
   nested.test('oneOf validator: [{}, {}].forEach(isSchemaValid(schema)({}, { oneOf })) -> { valid }..', (assert: OBJECT) => {
     const schema = {
       str: { type: 'string', oneOf: ['one', 'two', 'three'] }
@@ -314,7 +343,6 @@ test('Schema Validation', (nested: OBJECT) => {
 
   nested.test('Custom Validation: [{}, {}].forEach(isSchemaValid(schema)({}, [validation])) -> VALID.', (assert: OBJECT) => {
     const validation = [
-
       function (data: any): any {
         // data length cannot be less than 8
         if (data.length < 8) {

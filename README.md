@@ -3,15 +3,14 @@
 Schema validation for object literals.
 
 
-##Installation
+## Installation
 `npm install is-schema-valid`
 
 
-##Usage
-The isSchemaValid method takes a schema and returns a function that takes an object.
+## Usage
+The isSchemaValid method takes a schema and returns a function that takes an object literal to be validated.
 
-The returning function checks if object literal is the correct schema and returns an object with a valid key.
-Valid key will be true if the object passes or false if the object fails.
+The returning function validates the object against the schema and returns an object with a valid key. True if the object passes or false if the object fails.
 
 ```
 import isSchema from 'is-schema-valid';
@@ -19,7 +18,7 @@ import isSchema from 'is-schema-valid';
 isSchema(schema)(data);
 ```
 
-###Schema
+## Schema
 A schema is simply an object literal that another object literal can be validated against.
 
 To define a schema create an object literal with the keys name as the keys to be evaluated and the value as the valid key types name.
@@ -34,26 +33,18 @@ const schema = {
 };
 ```
 
-### Required keys
-To make a key required set the required value to true.
-```
-const schema = {
-  title: { type: 'string', required: true }
-}
-```
+## Types
 
-###Types
-
-####Boolean
+#### Boolean
 If value is set to 'boolean' it will only accept boolean values
 
-####Number
+#### Number
 If value is set to 'number' it will only accept number values
 
-####String
+#### String
 If value is set to 'string' it will only accept string values
 
-####Arrays
+#### Arrays
 Arrays are defined with a single item which is the type of items the array with contain.
 Arrays cannot have mixed types.
 
@@ -61,7 +52,7 @@ Arrays cannot have mixed types.
 const schema = { tags: ['string'] }
 ```
 
-####Nested schemas
+#### Nested schemas
 Schemas can be nested by setting a schema keys value to another schema.
 
 
@@ -74,7 +65,7 @@ const commentSchema = {
 const schema = { comments: [commentSchema] }
 ```
 
-##Errors
+## Errors
 When there is a failure an error object is returned.
 ```
 {
@@ -85,7 +76,72 @@ When there is a failure an error object is returned.
 }
 ```
 
-##Example
+
+## Built-in validation
+ - All schema types have a type validation and an optional require validation.
+ - max and min validation only works with number types.
+ - length, maxLength, minLength and match validation only works with string types.
+
+#### required
+Value is required.
+```
+{
+  str: { type: 'string', required: true }
+}
+```
+
+#### max
+Value cannot be higher than max.
+```
+{
+  num: { type: 'number', max: 5 }
+}
+```
+
+#### min
+Value cannot be lower than min.
+```
+{
+  num: { type: 'number', min: 1 }
+}
+```
+
+#### length
+Value length must be equal to length.
+
+```
+{
+  str: { type: 'string', length: 5 }
+}
+```
+
+#### maxLenth
+Value length cannot be higher than max.
+```
+{
+  str: { type: 'string', maxLenth: 5 }
+}
+```
+
+#### minLenth
+Value length cannot be lower than max.
+```
+{
+  str: { type: 'string', maxLenth: 1 }
+}
+```
+
+#### match
+Value matches regex.
+```
+{
+  str: { type: 'string', match: /[A-J]/gi }
+}
+```
+
+## Custom validation
+
+## Example
 ```
 import isSchema from 'is-schema-valid';
 
@@ -118,11 +174,7 @@ const data = {
 isSchema(schema)(data);
 ```
 
-##TODO
-- enums = oneOf, anyOf
-
-
-##Scripts
+## Scripts
 Start/watch
 ```
 npm run start
