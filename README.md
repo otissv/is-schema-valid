@@ -255,10 +255,16 @@ So it mostly comes down to a matter of style and purpose of each.
 The is-schema-valid method can always be wrapped inside another object if additional fields are needed.
 ```
 const schema = {
-    "id"    : 1,
-    "name"  : "A green door",
-    "price" : 12.50,
-    "tags"  : ["home", "green"]
+    "id":  {
+        type: "number",
+        required: true,
+   },
+    "name"{
+        type: "string",
+        required: true,
+   }
+    "price": "number",
+    "tags" : ["string"]
 }
 
 const productSchema = {
