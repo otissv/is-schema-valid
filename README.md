@@ -21,7 +21,7 @@ isSchema(schema)(data);
 ## Schema
 A schema is simply an object literal that another object literal can be validated against.
 
-To define a schema create an object literal with the keys name as the keys to be evaluated and the value as the valid key types name.
+To define a schema create an object literal with the keys name as the keys to be evaluated and the value as the valid key types name. An optional description property can be added.
 
 ```
 const schema = { title: 'string' };
@@ -193,6 +193,76 @@ const data = {
 
 isSchema(schema)(data);
 ```
+
+## Why not JSONSchema?
+I've previously used [JSONSchema](http://json-schema.org/) which worked nicely but wasn't quite what I was looking for.
+
+While  [JSONSchema](http://json-schema.org/) does indeed cover the use cases of [is-schema-valid](https://github.com/otissv/is-schema-valid) but there are unnecessary fields for my needs and I wanted to have a schema that looked the same as object literal notation it was for. The same way that [mongoosejs](http://mongoosejs.com/docs/guide.html) schema looks like the objects literal notation I actually write.
+
+Also the focus was not on describing an object but only validating it.
+
+Below is some data.
+```
+{
+    "id"      : 1,
+    "name": "A green door",
+    "price" : 12.50,
+    "tags"  : ["home", "green"]
+}
+```
+
+This is the JSONSchema schema for the above data.
+```
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Product",
+    "description": "A product from Acme's catalog",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "The unique identifier for a product",
+            "type": "integer"
+        },
+        "name": {
+            "description": "Name of the product",
+            "type": "string"
+        }
+    },
+    "required": ["id", "name"]
+}
+```
+
+And this is the is-schema-valid schema for the above data.
+```
+{
+    "id":  {
+        type: "number",
+        required: true,
+   },
+    "name"{
+        type: "string",
+        required: true,
+   }
+    "price": "number",
+    "tags" : ["string"]
+}
+```
+
+Notice the main difference is in describing the schema. In is-valid-schema there is no need for $schema, title, description or type only properties of the object. The type is always an object literal and as for the others these are not needed for validating an objects properties.
+
+So it mostly comes down to a matter of style and purpose of each.
+
+The is-schema-valid can always be wrapped inside another object if additional fields are needed.
+```
+const personSchema = {
+  tilte      : 'Person schema',
+  description: 'This is a schema for a person',
+  type       : 'object',
+  schema     : isSchema(schema)
+};
+personSchema.schema(data);
+```
+
 
 ## Scripts
 Start/watch

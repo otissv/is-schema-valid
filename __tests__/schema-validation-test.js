@@ -9,14 +9,14 @@ type OBJECT = { [key: string]: any };
 
 test('Schema Validation', (nested: OBJECT) => {
 
-  nested.test('Object validation : isSchemaValid(schema)({}) -> { valid }.', (assert: OBJECT) => {
+  nested.test('Object validation :: isSchemaValid(schema)({}) -> { valid }.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
     };
 
     const schema = {
-      title  : { type: 'string', required: true },
+      title  : { type: 'string', required: true, description: 'a schema' },
       author : 'string',
       summary: 'string',
       tags   : ['string'],
@@ -35,7 +35,7 @@ test('Schema Validation', (nested: OBJECT) => {
       ],
       views: 15000
     };
-
+    
     const collection = isSchemaValid(schema)(data);
     const expectCollection = { valid: true };
     assert.deepEqual(collection, expectCollection,
@@ -99,7 +99,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('Collection validation: [{}, {}].forEach(isSchemaValid(schema)({})) -> { valid }.', (assert: OBJECT) => {
+  nested.test('Collection validation :: [{}, {}].forEach(isSchemaValid(schema)({})) -> { valid }.', (assert: OBJECT) => {
     const commentSchema = {
       comment: 'string',
       commenter: 'string'
@@ -139,7 +139,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('length validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
+  nested.test('length validator :: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       ten   : { type: 'string', length: 10 }
     };
@@ -168,7 +168,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('maxLength validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
+  nested.test('maxLength validator :: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       ten   : { type: 'string', maxLength: 10 }
     };
@@ -197,7 +197,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('minLength validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
+  nested.test('minLength validator :: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       ten   : { type: 'string', minLength: 10 }
     };
@@ -226,7 +226,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('min validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
+  nested.test('min validator :: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       number: { type: 'number', min: 10 }
     };
@@ -255,7 +255,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('max validator: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
+  nested.test('max validator :: [{}, {}].forEach(isSchemaValid(schema)({}, { length })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       number: { type: 'number', max: 10 }
     };
@@ -284,7 +284,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('match validator: [{}, {}].forEach(isSchemaValid(schema)({}, { match })) -> { valid }.', (assert: OBJECT) => {
+  nested.test('match validator :: [{}, {}].forEach(isSchemaValid(schema)({}, { match })) -> { valid }.', (assert: OBJECT) => {
     const schema = {
       str: { type: 'string', match: /[A-J]/gi }
     };
@@ -313,7 +313,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('oneOf validator: [{}, {}].forEach(isSchemaValid(schema)({}, { oneOf })) -> { valid }..', (assert: OBJECT) => {
+  nested.test('oneOf validator :: [{}, {}].forEach(isSchemaValid(schema)({}, { oneOf })) -> { valid }..', (assert: OBJECT) => {
     const schema = {
       str: { type: 'string', oneOf: ['one', 'two', 'three'] }
     };
@@ -341,7 +341,7 @@ test('Schema Validation', (nested: OBJECT) => {
   });
 
 
-  nested.test('Custom Validation: [{}, {}].forEach(isSchemaValid(schema)({}, [validation])) -> VALID.', (assert: OBJECT) => {
+  nested.test('Custom Validation :: [{}, {}].forEach(isSchemaValid(schema)({}, [validation])) -> VALID.', (assert: OBJECT) => {
     const validation = [
       function (data: any): any {
         // data length cannot be less than 8

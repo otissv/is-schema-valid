@@ -1,6 +1,6 @@
 {
   "name": "is-schema-valid",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Checks if object literal has the correct schema",
   "main": "./lib/index.js",
   "repository": "https://github.com/otissv/is-schema-valid.git",
@@ -27,6 +27,7 @@
     "test:watch": "watch 'npm run tape' ./"
   },
   "devDependencies": {
+    "babel-cli": "~6.6.5",
     "babel-eslint": "~5.0.0",
     "babel-istanbul": "~0.6.1",
     "babel-loader": "~6.2.4",
