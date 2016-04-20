@@ -272,9 +272,10 @@ const productSchema = {
   description: 'This is a schema for a product',
   type       : 'object',
   properties : schema,
-  validate   : isSchema(schema)
 };
-productSchema.validate(data);
+
+
+isSchema(productSchema.properties)(data)
 ```
 
 
