@@ -16,7 +16,7 @@ test('Schema Validation', (nested: OBJECT) => {
     };
 
     const schema = {
-      title  : { type: 'string', required: true, description: 'a schema' },
+      title  : { type: 'string', required: true },
       author : 'string',
       summary: 'string',
       tags   : ['string'],
@@ -35,7 +35,7 @@ test('Schema Validation', (nested: OBJECT) => {
       ],
       views: 15000
     };
-    
+
     const collection = isSchemaValid(schema)(data);
     const expectCollection = { valid: true };
     assert.deepEqual(collection, expectCollection,

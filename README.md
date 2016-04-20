@@ -252,15 +252,23 @@ Notice the main difference is in describing the schema. In is-valid-schema there
 
 So it mostly comes down to a matter of style and purpose of each.
 
-The is-schema-valid can always be wrapped inside another object if additional fields are needed.
+The is-schema-valid method can always be wrapped inside another object if additional fields are needed.
 ```
-const personSchema = {
-  tilte      : 'Person schema',
-  description: 'This is a schema for a person',
+const schema = {
+    "id"    : 1,
+    "name"  : "A green door",
+    "price" : 12.50,
+    "tags"  : ["home", "green"]
+}
+
+const productSchema = {
+  title      : 'Product schema',
+  description: 'This is a schema for a product',
   type       : 'object',
-  schema     : isSchema(schema)
+  properties : schema,
+  validate   : isSchema(schema)
 };
-personSchema.schema(data);
+productSchema.validate(data);
 ```
 
 
