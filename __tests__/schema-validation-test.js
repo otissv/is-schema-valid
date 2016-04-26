@@ -403,4 +403,62 @@ test('Schema Validation', (nested: OBJECT) => {
 
     assert.end();
   });
+
+  nested.test('Nested schema :: isSchemaValid(schema)({}, [validation])) -> VALID.', (assert: OBJECT) => {
+    const validation = [
+      function (data: any): any {
+        // data length cannot be less than 8
+        if (data.length < 8) {
+          return { error: `Length Error: ${data} length cannot be less than 8` };
+        }
+        return data;
+      }
+    ];
+
+    const commentSchema = {
+      comment: { type: 'string', required: true, validation },
+      commenter: 'string'
+    };
+
+    const schema = {
+      title   : 'string',
+      author  : { type: 'string' },
+      summary : 'string',
+      tags    : ['string'],
+      comments: [commentSchema],
+      nestedObj: { type: commentSchema }
+    };
+
+
+    const supermanData = {
+      title: 'A journey from krypton',
+      author: 'Superman',
+      summary: 'The story of how superman traveled to earth.',
+      tags: ['superhero', 'DC comics', 'Metropolis'],
+      comments: [{comment: 'comment1', commenter: 'someone'}],
+      nestedObj: {comment: 'comment1', commenter: 'someone'}
+    };
+
+    const validArticle = isSchemaValid(schema)(supermanData).valid;
+    const expectedValidArticle = true;
+    assert.deepEqual(validArticle, expectedValidArticle,
+      'Nested is valid. Returns { valid: true }.');
+
+
+    const batmanData = {
+      title: 'Gothem night',
+      author: 'batman, The Dark Kninght',
+      summary: 'Expling the night life in Gothem city.',
+      tags: ['superhero', 'DC comics', 'Gothem'],
+      comments: [{comment: 'user1', commenter: 'someone'}],
+      nestedObj: {comment: 'user1', commenter: 'someone'}
+    };
+
+    const invalidArticle = isSchemaValid(schema)(batmanData).valid;
+    const expectedInvalidArticle = false;
+    assert.deepEqual(invalidArticle, expectedInvalidArticle,
+      'Does not validate nested schema. Returns { valid: false }.');
+
+    assert.end();
+  });
 });

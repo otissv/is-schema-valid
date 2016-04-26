@@ -176,7 +176,8 @@ const schema = {
   summary: 'string',
   tags: ['string'],
   comments: [commentSchema],
-  views: 'number'
+  views: 'number',
+  nestedObj: { type: commentSchema }
 };
 
 const data = {
@@ -188,7 +189,8 @@ const data = {
     {comment: 'firstComment', commenter: 'someone'},
     {comment: 'anotherComment', commenter: 'someoneElse'}
   ],
-  views: 15000
+  views: 15000,
+  nestedObj: {comment: 'comment1', commenter: 'someone'}
 };
 
 isSchema(schema)(data);

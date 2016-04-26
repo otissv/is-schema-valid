@@ -67,6 +67,7 @@ function valueValidation (data: OBJECT, key: string, schemaType: string) {
 
 // check object has all requireds fields in the Collection schema
 function requiredValidation (data: OBJECT, fields: Array<any>) {
+  // console.log(data);
   fields.forEach((item: any) => {
     if (!data[item]) {
       throw new Error(`Schema Required Field Error: Required field ${item} is missing.`);
@@ -82,7 +83,15 @@ function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Arr
 
 
   if (typeof data === 'object') {
-    Object.keys(data).forEach((key: any) => {
+    Object.keys(data).forEach((key: any): OBJECT => {
+      if (typeof schema[key].type === 'object') {
+        const nestedData = data[key];
+        const nestedSchema = schema[key].type;
+        const nestedRequiredFields = getRequiredFields(nestedSchema);
+
+        return keyAndPairValidation(nestedData, nestedSchema, nestedRequiredFields);
+      }
+
       let schemaType;
 
       if (Array.isArray(schema[key])) {
