@@ -16,12 +16,14 @@ test('Schema Validation', (nested: OBJECT) => {
     };
 
     const schema = {
-      title  : { type: 'string', required: true },
-      author : 'string',
-      summary: 'string',
-      tags   : ['string'],
-      comments: [commentSchema],
-      views: 'number'
+      title     : { type: 'string', required: true },
+      author    : 'string',
+      summary   : 'string',
+      tags      : ['string'],
+      comments  : [commentSchema],
+      published : { type: 'boolean', required: true },
+      views     : 'number',
+      likes     : { type: 'number', required: true }
     };
 
     const data = {
@@ -33,7 +35,9 @@ test('Schema Validation', (nested: OBJECT) => {
         {comment: 'firstComment', commenter: 'someone'},
         {comment: 'anotherComment', commenter: 'someoneElse'}
       ],
-      views: 15000
+      published: false,
+      views: 15000,
+      likes: 0
     };
 
     const collection = isSchemaValid(schema)(data);
@@ -461,4 +465,6 @@ test('Schema Validation', (nested: OBJECT) => {
 
     assert.end();
   });
+
+
 });

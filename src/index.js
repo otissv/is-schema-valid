@@ -67,9 +67,8 @@ function valueValidation (data: OBJECT, key: string, schemaType: string) {
 
 // check object has all requireds fields in the Collection schema
 function requiredValidation (data: OBJECT, fields: Array<any>) {
-  // console.log(data);
   fields.forEach((item: any) => {
-    if (!data[item]) {
+    if (data[item] === undefined) {
       throw new Error(`Schema Required Field Error: Required field ${item} is missing.`);
     }
   });
