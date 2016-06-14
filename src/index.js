@@ -18,7 +18,7 @@ type VALID = {
 // check object structure matches Collection schema
 function keyValidation (type: string) {
   if (type == null) {
-    throw new TypeError('Schema Key Error: A key is not a valid schema key.');
+    throw new TypeError('Schema Key Error: A key is not a undefined.');
   }
 }
 
@@ -28,6 +28,7 @@ function valueValidation (data: OBJECT, key: string, schemaType: string) {
   const {
     type,
     length,
+    empty,
     minLength,
     maxLength,
     max,
@@ -36,8 +37,11 @@ function valueValidation (data: OBJECT, key: string, schemaType: string) {
     oneOf
   } = schemaType;
 
+  builtInValidators.empty(empty)(data);
+
   // type validation
   if (schemaType.type === 'array') {
+
     // if array call isSchema to validate nested array.
     data.forEach((element: any) => isSchemaValid(element, schemaType.schema));
 
@@ -77,16 +81,20 @@ function requiredValidation (data: OBJECT, fields: Array<any>) {
 
 // validate all elements in the Collection
 function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Array<string>) {
-
   requiredValidation(data, requiredFields);
-
 
   if (typeof data === 'object') {
     Object.keys(data).forEach((key: any): OBJECT => {
-      if (typeof schema[key].type === 'object') {
+
+      if (schema[key] != null && typeof schema[key].type === 'object') {
         const nestedData = data[key];
         const nestedSchema = schema[key].type;
         const nestedRequiredFields = getRequiredFields(nestedSchema);
+
+        if (Array.isArray(schema[key].type)) {
+
+          valueValidation(data[key], key, { ...schema[key], type: 'array' });
+        }
 
         return keyAndPairValidation(nestedData, nestedSchema, nestedRequiredFields);
       }
@@ -96,14 +104,18 @@ function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Arr
       if (Array.isArray(schema[key])) {
         schemaType = { type: 'array', schema: schema[key][0] };
 
+        // run custom validation
+        schema[key][0].validation && customValidation(schema[key][0].validation)(data[key]);
+
       } else if (typeof schema[key] === 'object') {
-        schemaType = schema[key];
+        schemaType = schema[key].type ? schema[key] : { type: 'object' };
 
         // run custom validation
         schema[key].validation && customValidation(schema[key].validation)(data[key]);
 
       } else {
-        schemaType = { type: schema[key] };
+
+        schemaType = Array.isArray(schema) ? { type: 'object' } : { type: schema[key] };
       }
 
       keyValidation(schemaType.type);
@@ -112,6 +124,7 @@ function keyAndPairValidation (data: OBJECT, schema: SCHEMA, requiredFields: Arr
 
   } else {
     // if element is not an object
+
     valueValidation(data, 'array', { type: schema });
   }
 }
@@ -132,8 +145,8 @@ export default function isSchemaValid (schema: SCHEMA): VALID | OBJECT {
 
     try {
       keyAndPairValidation(data, schema, requiredFields);
-
       return { valid: true };
+
     } catch (error) {
       return {
         valid: false,

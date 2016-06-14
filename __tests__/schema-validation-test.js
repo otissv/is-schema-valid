@@ -403,7 +403,7 @@ test('Schema Validation', (nested: OBJECT) => {
     const invalidArticle = isSchemaValid(schema)(batmanData).valid;
     const expectedInvalidArticle = false;
     assert.deepEqual(expectedInvalidArticle, invalidArticle,
-      'Custom validation falis as expected. Returns { valid: false }.');
+      'Custom validation fails as expected. Returns { valid: false }.');
 
     assert.end();
   });
@@ -463,8 +463,101 @@ test('Schema Validation', (nested: OBJECT) => {
     assert.deepEqual(invalidArticle, expectedInvalidArticle,
       'Does not validate nested schema. Returns { valid: false }.');
 
+
+    const fullNameSchema = {
+      firstName: 'string',
+      lastName: 'string'
+    };
+
+    const categoriestSchema = {
+      color: 'string',
+      category: 'string'
+    };
+
+    const nestedSchema = {
+      fullName : [fullNameSchema],
+      categories : { type: [categoriestSchema] }
+    };
+
+    const nestedData = {
+      fullName: [
+        { firstName: 'otis', lastName: 'virginie' }
+      ],
+      categories: [
+        { color: 'string', category: 'string' }
+      ]
+    };
+
+    const collection = isSchemaValid(nestedSchema)(nestedData).valid;
+    assert.deepEqual(collection, true,
+      'Nested object type passes schema validation. Returns { valid: true }');
+
     assert.end();
   });
 
 
+  nested.test('Empty schema', (assert: OBJECT) => {
+
+    let str = { str: '' };
+    const strSchema = { str: { type: 'string', empty: false } };
+    let strEmpty = isSchemaValid(strSchema)(str).valid;
+    assert.deepEqual(strEmpty, false,
+      'String type should not be empty. Returns { valid: false }.');
+
+
+    let num = { num: 0 };
+    const numSchema = { num: { type: 'number', empty: false } };
+    let numEmpty = isSchemaValid(numSchema)(num).valid;
+    assert.deepEqual(numEmpty, false,
+      'String type should not be empty. Returns { valid: false }.');
+
+
+    let arry = { arry: [] };
+    const arrySchema = {
+      arry: { type: ['string'], empty: false }
+    };
+    let arryEmpty = isSchemaValid(arrySchema)(arry).valid;
+    assert.deepEqual(arryEmpty, false,
+      'String type should not be empty. Returns { valid: false }.');
+
+
+    const validation = [
+      function (data: any): any {
+        // data first charater must be caitalised
+        if (data.charAt(0) !== data.charAt(0).toUpperCase()) {
+          return { error: 'Author name must start with a capital letter' };
+        }
+        return data;
+      }
+    ];
+
+    const fullNameSchema = {
+      firstName: 'string',
+      lastName: 'string'
+    };
+
+    const nestedSchema = {
+      comment: 'string',
+      commenter: 'string'
+    };
+
+    const schema = {
+      fullName : [fullNameSchema],
+      comments : { type: [nestedSchema], empty: false }
+    };
+
+    const nestedData = {
+      fullName: [
+        { firstName: 'otis', lastName: 'virginie' }
+      ],
+      comments: [
+      ]
+    };
+
+    const collection = isSchemaValid(schema)(nestedData).valid;
+    assert.deepEqual(collection, false,
+      'Nested object type passes schema validation. Returns { valid: true }');
+
+    assert.end();
+  });
 });

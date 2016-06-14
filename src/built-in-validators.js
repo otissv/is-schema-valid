@@ -88,3 +88,23 @@ export function oneOf (list: Array<any>): FN_ARRAY {
     return data;
   };
 }
+
+// Checks if data is one of the enum elements
+export function empty (empty: boolean): FN_ARRAY {
+  return function (data: any): any {
+
+    const throwEmpty = (value: any) => {
+      throw new Error('Empty Validator Error: Property cannot be empty');
+    };
+
+    if (typeof empty === 'boolean') {
+      const dataType = typeof data;
+
+      if (dataType === 'string' && !data || data.trim === '') throwEmpty();
+      if (dataType === 'number' && data === 0) throwEmpty();
+      if (Array.isArray(data) && data.length === 0) throwEmpty('Array');
+    }
+
+    return data;
+  };
+}
