@@ -1,6 +1,6 @@
 {
   "name": "is-schema-valid",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Checks if object literal has the correct schema",
   "main": "./lib/index.js",
   "repository": "https://github.com/otissv/is-schema-valid.git",
